@@ -134,7 +134,8 @@ namespace WindowsFormsApplication1
 
         private void Solve()
         {
-            Solution = N_Puzzle.NPuzzleSolver.Solve(MainPuzzle).ToList();
+            N_Puzzle.IEvaluation Eval = new N_Puzzle.ManhattanDistanceEvaluator();
+            Solution = N_Puzzle.NPuzzleSolver.Solve(MainPuzzle, Eval).ToList();
 
             OnSolved();
         }
