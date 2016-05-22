@@ -92,21 +92,6 @@ namespace WindowsFormsApplication1
             }
         }
 
-        private delegate void PaintDelegate(object sender, PaintEventArgs e);
-        private void Frm_Main_Paint(object sender, PaintEventArgs e)
-        {
-            //if (this.InvokeRequired)
-            //{
-            //    this.Invoke(new PaintDelegate(Frm_Main_Paint), sender, e);
-            //}
-            //else
-            //{
-            //    BlitGraphics.Graphics.Clear(this.BackColor);
-            //    BlitGraphics.Graphics.DrawImage(m_Foreground, 1, 1);
-            //    BlitGraphics.Render();
-            //}
-        }
-
         int CurrentIndex = 0;
 
         private void Btn_Gen_Click(object sender, EventArgs e)
