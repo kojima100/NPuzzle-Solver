@@ -117,26 +117,30 @@ namespace WindowsFormsApplication1
             Btn_MoveForward.Enabled = false;
         }
 
-        private void Solve()
+        private void Solve(N_Puzzle.I_NPuzzleSolver Solver)
         {
             N_Puzzle.IEvaluation Eval = new N_Puzzle.ManhattanDistanceEvaluator();
-            Solution = N_Puzzle.NPuzzleSolver.Solve(MainPuzzle, Eval).ToList();
+            System.Diagnostics.Stopwatch SolutionTime = new System.Diagnostics.Stopwatch();
 
-            OnSolved();
+            SolutionTime.Start();
+            Solution = Solver.Solve(MainPuzzle, Eval).ToList();
+            SolutionTime.Stop();
+
+            OnSolved(SolutionTime.Elapsed);
         }
 
-        private delegate void OnSolvedDelegate();
-        private void OnSolved()
+        private delegate void OnSolvedDelegate(TimeSpan ElapsedTime);
+        private void OnSolved(TimeSpan ElapsedTime)
         {
             if(this.InvokeRequired)
             {
-                this.Invoke(new OnSolvedDelegate(OnSolved));
+                this.Invoke(new OnSolvedDelegate(OnSolved), ElapsedTime);
             }
             else
             {
-                MessageBox.Show("SOLVED!!!");
-
-                Lbl_Solved.Text = "Solved in " + Solution.Count + " moves.";
+                Lbl_Solved.Text = "Solved in " + Solution.Count + " moves. Solution was found in " + string.Format("{0:00}h:{1:00}m:{2:00}s.{3:00}ms",
+            ElapsedTime.Hours, ElapsedTime.Minutes, ElapsedTime.Seconds,
+            ElapsedTime.Milliseconds / 10); ;
                 Lbl_CurrentMove.Text = "Move 1 of " + Solution.Count;
 
                 Lst_Moves.DataSource = Solution;
@@ -159,7 +163,18 @@ namespace WindowsFormsApplication1
             Btn_Gen.Enabled = false;
             Btn_Solve.Enabled = false;
 
-            SolveThread = new System.Threading.Thread(new System.Threading.ThreadStart(Solve));
+            N_Puzzle.I_NPuzzleSolver Solver = null;
+
+            if(Rad_AStar.Checked)
+            {
+                Solver = new N_Puzzle.NPuzzleSolverAStar();
+            }
+            else if(Rad_Breadth.Checked)
+            {
+                Solver = new N_Puzzle.NPuzzleSolverBreadthFirst();
+            }
+
+            SolveThread = new System.Threading.Thread(new System.Threading.ThreadStart(() => Solve(Solver)));
             SolveThread.Priority = System.Threading.ThreadPriority.Highest;
 
             SolveThread.Start();

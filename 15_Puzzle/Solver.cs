@@ -61,83 +61,126 @@ namespace N_Puzzle
         }
     }
 
-    public static class NPuzzleSolver
+    class NPuzzleNode : IComparable<NPuzzleNode>, IEquatable<NPuzzleNode>
     {
-        class NPuzzleNode : IComparable<NPuzzleNode>, IEquatable<NPuzzleNode>
+        public NPuzzleNode Parent
         {
-            public NPuzzleNode Parent
+            get; private set;
+        }
+
+        public NPuzzle State
+        {
+            get; private set;
+        }
+
+        private IEvaluation m_Evaluator;
+        public IEvaluation Evaluator
+        {
+            get
             {
-                get; private set;
+                return m_Evaluator;
             }
 
-            public NPuzzle State
+            private set
             {
-                get; private set;
-            }
-
-            private IEvaluation m_Evaluator;
-            public IEvaluation Evaluator
-            {
-                get
-                {
-                    return m_Evaluator;
-                }
-
-                private set
-                {
-                    m_Evaluator = value;
-                    H = Evaluator.Evaluate(State);
-                }
-            }
-
-            public float G
-            {
-                get
-                {
-                    return (float)State.PreviousMoves.Count;
-                }
-            }
-
-            public float H
-            {
-                get; private set;
-            }
-
-            public float F
-            {
-                get
-                {
-                    return G + H;
-                }
-            }
-
-            public NPuzzleNode(NPuzzleNode _Parent, NPuzzle _State, IEvaluation Eval)
-            {
-                Parent = _Parent;
-                State = _State;
-                Evaluator = Eval;
-            }
-
-            public int CompareTo(NPuzzleNode other)
-            {
-                return F.CompareTo(other.F);
-            }
-
-            public IEnumerable<NPuzzleNode> Successors()
-            {
-                foreach(MOVE Move in State.AvalibleMoves)
-                {
-                    yield return new NPuzzleNode(this, State.Move(Move), this.Evaluator);
-                }
-            }
-
-            public bool Equals(NPuzzleNode other)
-            {
-                return this.State.Equals(other.State);
+                m_Evaluator = value;
+                H = Evaluator.Evaluate(State);
             }
         }
 
-        public static IEnumerable<N_Puzzle.MOVE> Solve(NPuzzle Puzzle, IEvaluation Eval)
+        public float G
+        {
+            get
+            {
+                return (float)State.PreviousMoves.Count;
+            }
+        }
+
+        public float H
+        {
+            get; private set;
+        }
+
+        public float F
+        {
+            get
+            {
+                return G + H;
+            }
+        }
+
+        public NPuzzleNode(NPuzzleNode _Parent, NPuzzle _State, IEvaluation Eval)
+        {
+            Parent = _Parent;
+            State = _State;
+            Evaluator = Eval;
+        }
+
+        public int CompareTo(NPuzzleNode other)
+        {
+            return F.CompareTo(other.F);
+        }
+
+        public IEnumerable<NPuzzleNode> Successors()
+        {
+            foreach (MOVE Move in State.AvalibleMoves)
+            {
+                yield return new NPuzzleNode(this, State.Move(Move), this.Evaluator);
+            }
+        }
+
+        public bool Equals(NPuzzleNode other)
+        {
+            return this.State.Equals(other.State);
+        }
+    }
+
+    public interface I_NPuzzleSolver
+    {
+        IEnumerable<N_Puzzle.MOVE> Solve(NPuzzle Puzzle, IEvaluation Eval);
+    }
+
+    public class NPuzzleSolverBreadthFirst : I_NPuzzleSolver
+    {
+        public IEnumerable<MOVE> Solve(NPuzzle Puzzle, IEvaluation Eval)
+        {
+            List<NPuzzleNode> Open = new List<NPuzzleNode>();
+            List<NPuzzleNode> Closed = new List<NPuzzleNode>();
+
+            NPuzzleNode Goal = null;
+
+            Open.Add(new NPuzzleNode(null, Puzzle, Eval));
+
+            while(Open.Count > 0)
+            {
+                NPuzzleNode U = Open[0];
+                Open.RemoveAt(0);
+
+                Closed.Add(U);
+
+                if(U.H == 0.0f)
+                {
+                    Goal = U;
+                    break;
+                }
+
+                foreach(NPuzzleNode S in U.Successors())
+                {
+                    if(!Open.Contains(S) && !Closed.Contains(S))
+                    {
+                        Open.Add(S);
+                    }
+                }
+
+            }
+
+            return Goal.State.PreviousMoves;
+        }
+    }
+
+    public class NPuzzleSolverAStar : I_NPuzzleSolver
+    {
+        public IEnumerable<N_Puzzle.MOVE> Solve(NPuzzle Puzzle, IEvaluation Eval)
         {
             List<NPuzzleNode> Open = new List<NPuzzleNode>();
             List<NPuzzleNode> Closed = new List<NPuzzleNode>();
@@ -182,13 +225,16 @@ namespace N_Puzzle
 
             return Goal.State.PreviousMoves;
         }
+    }
 
+    public static class Utility
+    {
         public static void InsertSorted<T>(this List<T> OrderedList, T t) where T : IComparable<T>
         {
             int i = 0;
-            for(i = 0; i != OrderedList.Count; ++i)
+            for (i = 0; i != OrderedList.Count; ++i)
             {
-                if((OrderedList[i].CompareTo(t) == 1) || (i == OrderedList.Count - 1))
+                if ((OrderedList[i].CompareTo(t) == 1) || (i == OrderedList.Count - 1))
                 {
                     break;
                 }

@@ -39,7 +39,11 @@
             this.Rad_8Puzzle = new System.Windows.Forms.RadioButton();
             this.rad_15Puzzle = new System.Windows.Forms.RadioButton();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.Rad_Breadth = new System.Windows.Forms.RadioButton();
+            this.Rad_AStar = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
             // Lbl_Puzzle
@@ -155,11 +159,45 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "N Puzzle";
             // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.Rad_Breadth);
+            this.groupBox2.Controls.Add(this.Rad_AStar);
+            this.groupBox2.Location = new System.Drawing.Point(218, 374);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(147, 46);
+            this.groupBox2.TabIndex = 11;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Search Algorithm";
+            // 
+            // Rad_Breadth
+            // 
+            this.Rad_Breadth.AutoSize = true;
+            this.Rad_Breadth.Checked = true;
+            this.Rad_Breadth.Location = new System.Drawing.Point(6, 19);
+            this.Rad_Breadth.Name = "Rad_Breadth";
+            this.Rad_Breadth.Size = new System.Drawing.Size(84, 17);
+            this.Rad_Breadth.TabIndex = 8;
+            this.Rad_Breadth.TabStop = true;
+            this.Rad_Breadth.Text = "Breadth First";
+            this.Rad_Breadth.UseVisualStyleBackColor = true;
+            // 
+            // Rad_AStar
+            // 
+            this.Rad_AStar.AutoSize = true;
+            this.Rad_AStar.Location = new System.Drawing.Point(96, 19);
+            this.Rad_AStar.Name = "Rad_AStar";
+            this.Rad_AStar.Size = new System.Drawing.Size(36, 17);
+            this.Rad_AStar.TabIndex = 9;
+            this.Rad_AStar.Text = "A*";
+            this.Rad_AStar.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(600, 509);
+            this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.Btn_MoveForward);
             this.Controls.Add(this.Btn_MoveBack);
@@ -174,6 +212,8 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -192,6 +232,9 @@
         private System.Windows.Forms.RadioButton Rad_8Puzzle;
         private System.Windows.Forms.RadioButton rad_15Puzzle;
         private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.RadioButton Rad_Breadth;
+        private System.Windows.Forms.RadioButton Rad_AStar;
     }
 }
 
